@@ -63,7 +63,6 @@ docker/checkout-tag:
 	cd docker/source ; git checkout `git tag -l --points-at HEAD | tail -n 1`
 
 docker/public:
-	git clone --depth 1 $(GIT_SRC) docker/source
 	cd docker/source ; npm install
 	sudo npm install -g gulp-cli
 	cd docker/source ; gulp build
