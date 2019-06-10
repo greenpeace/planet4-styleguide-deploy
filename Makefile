@@ -92,6 +92,7 @@ push-latest:
 
 dev: test dev-config
 	helm init --client-only
+	helm repo add p4 https://planet4-helm-charts.storage.googleapis.com && \
 	helm repo update
 	helm upgrade --install --force --recreate-pods --wait $(RELEASE_NAME) $(CHART_NAME) \
 		--namespace=$(NAMESPACE) \
