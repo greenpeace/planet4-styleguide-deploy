@@ -57,10 +57,12 @@ pull:
 docker/checkout-master:
 	git clone --depth 1 $(GIT_SRC) docker/source
 	cd docker/source ; git checkout master
+	cd docker/source ; echo `git rev-parse HEAD` > version.txt
 
 docker/checkout-tag:
 	git clone --depth 1 $(GIT_SRC) docker/source
 	cd docker/source ; git checkout `git tag -l --points-at HEAD | tail -n 1`
+	cd docker/source ; echo `git tag -l --points-at HEAD | tail -n 1` > version.txt
 
 docker/public:
 	cd docker/source ; npm install
