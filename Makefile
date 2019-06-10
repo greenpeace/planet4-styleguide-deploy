@@ -55,6 +55,7 @@ pull:
 docker/public:
 	git clone --depth 1 $(GIT_SRC) docker/source
 	cd docker/source ; npm install
+	npm install -g gulp-cli
 	cd docker/source ; gulp build
 	mv docker/source/dist docker/public
 
