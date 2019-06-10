@@ -30,6 +30,8 @@ BRANCH_NAME ?= $(shell git rev-parse --abbrev-ref HEAD | sed 's/$(SED_MATCH)/-/g
 BUILD_TAG ?= $(shell git tag -l --points-at HEAD | tail -n1 | sed 's/$(SED_MATCH)/-/g')
 endif
 
+
+
 # If BUILD_TAG is blank there's no tag on this commit
 ifeq ($(strip $(BUILD_TAG)),)
 # Default to branch name
@@ -52,12 +54,24 @@ test:
 pull:
 	docker pull gcr.io/planet-4-151612/openresty:latest
 
+docker/checkout-master:
+	git clone --depth 1 $(GIT_SRC) docker/source
+	cd docker/source ; git checkout master
+
+docker/checkout-tag:
+	git clone --depth 1 $(GIT_SRC) docker/source
+	cd docker/source ; git checkout `git tag -l --points-at HEAD | tail -n 1`
+
 docker/public:
 	git clone --depth 1 $(GIT_SRC) docker/source
 	cd docker/source ; npm install
 	sudo npm install -g gulp-cli
 	cd docker/source ; gulp build
 	mv docker/source/dist docker/public
+
+checkout-master: docker/checkout-master
+
+checkout-tag: docker/checkout-tag
 
 build: test pull docker/public
 	docker build \
