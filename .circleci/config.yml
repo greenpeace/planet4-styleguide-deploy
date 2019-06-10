@@ -8,12 +8,14 @@ version: 2
 
 jobs:
   build:
+    <<: *defaults
     steps:
       - checkout
       - run:
           command: echo "this is the build"
 
   deploy:
+    <<: *defaults
     steps:
       - checkout
       - run:
