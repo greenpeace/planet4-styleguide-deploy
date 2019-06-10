@@ -78,6 +78,7 @@ build: test pull docker/public
 	docker build \
 		--tag=gcr.io/planet-4-151612/styleguide:$(BUILD_TAG) \
 		--tag=gcr.io/planet-4-151612/styleguide:$(BUILD_NUM) \
+		--tag=gcr.io/planet-4-151612/styleguide:latest \
 		--tag=gcr.io/planet-4-151612/styleguide:$(REVISION_TAG) \
 		docker
 
@@ -96,7 +97,7 @@ dev-push: dev-config
 
 prod-push: prod-config
 	gcloud auth configure-docker
-	docker push gcr.io/planet-4-151612/styleguide:tag
+	docker push gcr.io/planet-4-151612/styleguide:latest
 	docker push gcr.io/planet-4-151612/styleguide:$(BUILD_NUM)
 
 dump:
