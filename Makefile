@@ -78,6 +78,7 @@ dump:
 	$(info BUILD_TAG is [${BUILD_TAG}])
 
 push-tag:
+	gcloud auth configure-docker
 	docker push gcr.io/planet-4-151612/styleguide:$(BUILD_TAG)
 	docker push gcr.io/planet-4-151612/styleguide:$(BUILD_NUM)
 
