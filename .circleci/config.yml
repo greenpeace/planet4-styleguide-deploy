@@ -9,14 +9,23 @@ version: 2
 jobs:
   build:
     <<: *defaults
+    environment:
+      GOOGLE_PROJECT_ID: planet4-production
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
       - checkout
-      - run:
-          command: echo "this is the build"
+      - run: activate-gcloud-account.sh
+      - run: make build
+      - run: make dev-push
 
   deploy:
     <<: *defaults
+    environment:
+      GOOGLE_PROJECT_ID: planet4-production
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
       - checkout
       - run:
           command: echo "this is the deploy"
@@ -27,10 +36,14 @@ workflows:
   main:
     jobs:
       - build:
+          context: org-global
           filters:
             branches:
               only: master
       - deploy:
+          context: org-global
           filters:
             branches:
               only: master
+          requires:
+            - build
