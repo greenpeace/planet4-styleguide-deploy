@@ -83,25 +83,22 @@ dev-config:
 	gcloud config set project $(DEV_PROJECT)
 	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
 
-dev-push: dev-config push
+prod-config:
+	gcloud config set project $(PROD_PROJECT)
+	gcloud container clusters get-credentials $(PROD_CLUSTER) --zone $(PROD_ZONE) --project $(PROD_PROJECT)
 
-push: push-tag push-latest
+dev-push: dev-config
+	gcloud auth configure-docker
+	docker push gcr.io/planet-4-151612/styleguide:develop
+	docker push gcr.io/planet-4-151612/styleguide:$(BUILD_NUM)
+
+prod-push: prod-config
+	gcloud auth configure-docker
+	docker push gcr.io/planet-4-151612/styleguide:tag
+	docker push gcr.io/planet-4-151612/styleguide:$(BUILD_NUM)
 
 dump:
 	$(info BUILD_TAG is [${BUILD_TAG}])
-
-push-tag:
-	gcloud auth configure-docker
-	docker push gcr.io/planet-4-151612/styleguide:$(BUILD_TAG)
-	docker push gcr.io/planet-4-151612/styleguide:$(BUILD_NUM)
-
-push-latest:
-	@if [[ "$(PUSH_LATEST)" = "true" ]]; then { \
-		docker tag gcr.io/planet-4-151612/styleguide:$(REVISION_TAG) gcr.io/planet-4-151612/styleguide:latest; \
-		docker push gcr.io/planet-4-151612/styleguide:latest; \
-	}	else { \
-		echo "Not tagged.. skipping latest"; \
-	} fi
 
 dev: test dev-config
 	helm init --client-only
@@ -112,9 +109,7 @@ dev: test dev-config
 		--values values.yaml \
 		--values env/dev/values.yaml
 
-prod: test
-	gcloud config set project $(PROD_PROJECT)
-	gcloud container clusters get-credentials $(PROD_CLUSTER) --zone $(PROD_ZONE) --project $(PROD_PROJECT)
+prod: test prod-config
 	helm init --client-only
 	helm repo add p4 https://planet4-helm-charts.storage.googleapis.com && \
 	helm repo update
