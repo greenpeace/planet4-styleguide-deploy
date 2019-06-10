@@ -1,0 +1,34 @@
+---
+defaults: &defaults
+  docker:
+    - image: gcr.io/planet-4-151612/circleci-base:latest
+  working_directory: /home/circleci/app
+
+version: 2
+
+jobs:
+  build:
+    steps:
+      - checkout
+      - run:
+          command: echo "this is the build"
+
+  deploy:
+    steps:
+      - checkout
+      - run:
+          command: echo "this is the deploy"
+
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+      - deploy:
+          filters:
+            branches:
+              only: master
