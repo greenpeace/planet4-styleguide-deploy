@@ -2,4 +2,4 @@
 hostname: planet4.greenpeace.org
 hostpath: styleguide
 image:
-  tag: master
+  tag: tag
