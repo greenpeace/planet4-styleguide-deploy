@@ -103,6 +103,7 @@ prod: test
 	gcloud config set project $(PROD_PROJECT)
 	gcloud container clusters get-credentials $(PROD_CLUSTER) --zone $(PROD_ZONE) --project $(PROD_PROJECT)
 	helm init --client-only
+	helm repo add p4 https://planet4-helm-charts.storage.googleapis.com && \
 	helm repo update
 	helm upgrade --install --force --wait $(RELEASE_NAME) p4/static \
 		--namespace=$(NAMESPACE) \
