@@ -120,7 +120,7 @@ prod: test prod-config
 	helm init --client-only
 	helm repo add p4 https://planet4-helm-charts.storage.googleapis.com && \
 	helm repo update
-	helm upgrade --install --force --wait $(RELEASE_NAME) p4/static \
+	helm upgrade --install --force --recreate-pods --wait $(RELEASE_NAME) $(CHART_NAME) \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--values env/prod/values.yaml
