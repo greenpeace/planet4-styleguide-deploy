@@ -58,11 +58,15 @@ docker/checkout-master:
 	git clone --depth 1 $(GIT_SRC) docker/source
 	cd docker/source ; git checkout master
 	cd docker/source ; echo `git rev-parse --short HEAD` > version.txt
+	yq -r .hostname env/dev/values.yaml > docker/source/hostname.txt
+	yq -r .hostpath env/dev/values.yaml > docker/source/hostpath.txt
 
 docker/checkout-tag:
 	git clone --depth 1 $(GIT_SRC) docker/source
 	cd docker/source ; git checkout `git tag -l --points-at HEAD | tail -n 1`
 	cd docker/source ; echo `git tag -l --points-at HEAD | tail -n 1` > version.txt
+	yq -r .hostname env/prod/values.yaml > docker/source/hostname.txt
+	yq -r .hostpath env/prod/values.yaml > docker/source/hostpath.txt
 
 docker/public:
 	cd docker/source ; npm install
