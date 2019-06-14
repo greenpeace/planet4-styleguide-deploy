@@ -78,13 +78,11 @@ checkout-master: docker/checkout-master
 
 checkout-tag: docker/checkout-tag
 
-build: test pull docker/public
-	docker build \
-		--tag=gcr.io/planet-4-151612/styleguide:$(BUILD_TAG) \
-		--tag=gcr.io/planet-4-151612/styleguide:$(BUILD_NUM) \
-		--tag=gcr.io/planet-4-151612/styleguide:latest \
-		--tag=gcr.io/planet-4-151612/styleguide:$(REVISION_TAG) \
-		docker
+build: test pull docker/public echo-build
+	docker build --tag=greenpeaceinternational/p4-styleguide:$(BUILD_NUM) docker
+
+docker-push:
+	docker push greenpeaceinternational/p4-styleguide:$(BUILD_NUM)
 
 dev-config:
 	gcloud config set project $(DEV_PROJECT)
@@ -94,18 +92,8 @@ prod-config:
 	gcloud config set project $(PROD_PROJECT)
 	gcloud container clusters get-credentials $(PROD_CLUSTER) --zone $(PROD_ZONE) --project $(PROD_PROJECT)
 
-dev-push: dev-config
-	gcloud auth configure-docker
-	docker push gcr.io/planet-4-151612/styleguide:develop
-	docker push gcr.io/planet-4-151612/styleguide:$(BUILD_NUM)
-
-prod-push: prod-config
-	gcloud auth configure-docker
-	docker push gcr.io/planet-4-151612/styleguide:latest
-	docker push gcr.io/planet-4-151612/styleguide:$(BUILD_NUM)
-
-dump:
-	$(info BUILD_TAG is [${BUILD_TAG}])
+echo-build:
+	$(info BUILD_NUM is [${BUILD_NUM}])
 
 dev: test dev-config
 	helm init --client-only
@@ -113,6 +101,7 @@ dev: test dev-config
 	helm repo update
 	helm upgrade --install --force --recreate-pods --wait $(RELEASE_NAME) $(CHART_NAME) \
 		--namespace=$(NAMESPACE) \
+		--set image.tag=$(BUILD_NUM) \
 		--values values.yaml \
 		--values env/dev/values.yaml
 
@@ -120,7 +109,8 @@ prod: test prod-config
 	helm init --client-only
 	helm repo add p4 https://planet4-helm-charts.storage.googleapis.com && \
 	helm repo update
-	helm upgrade --install --force --wait $(RELEASE_NAME) p4/static \
+	helm upgrade --install --force --recreate-pods --wait $(RELEASE_NAME) $(CHART_NAME) \
 		--namespace=$(NAMESPACE) \
+		--set image.tag=$(BUILD_NUM) \
 		--values values.yaml \
 		--values env/prod/values.yaml

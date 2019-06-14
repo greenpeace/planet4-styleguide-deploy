@@ -1,5 +1,5 @@
 ---
 image:
-  repository: gcr.io/planet-4-151612/styleguide
+  repository: greenpeaceinternational/p4-styleguide
 pagespeed:
   enabled: false

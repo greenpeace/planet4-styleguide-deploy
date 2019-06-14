@@ -1,5 +1,3 @@
 ---
 hostname: develop.planet4.greenpeace.org
 hostpath: styleguide
-image:
-  tag: develop
