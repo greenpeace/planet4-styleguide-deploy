@@ -16,9 +16,10 @@ jobs:
           docker_layer_caching: true
       - checkout
       - run: activate-gcloud-account.sh
+      - run: ./docker-login.sh
       - run: make checkout-master
       - run: make build
-      - run: make dev-push
+      - run: make docker-push
       - run: make dev
 
   build-prod:
@@ -30,9 +31,10 @@ jobs:
           docker_layer_caching: true
       - checkout
       - run: activate-gcloud-account.sh
+      - run: ./docker-login.sh
       - run: make checkout-tag
       - run: make build
-      - run: make prod-push
+      - run: make docker-push
       - run: make prod
 
 workflows:
